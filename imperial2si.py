@@ -15,20 +15,30 @@ def convert_to_cm(event):
     print(str(input_value) + " inch = " + str(result) + " cm")
 
 def convert_unit(event):
+    input_unit = imp_unit.get()
+    output_unit = SI_unit.get()
     input_value = float(ent_unit.get())
     factor = 1.0
-    if imp_unit.get() == "inch":
+
+    if input_unit == "inch":
         factor = 0.0254
-    elif imp_unit.get() == "foot":
+    elif input_unit == "foot":
         factor  = 0.3048
-    elif imp_unit.get() == "yard":
+    elif input_unit== "yard":
         factor  = 0.9144
-    elif imp_unit.get() == "mile":
+    elif input_unit == "mile":
         factor = 1609.344
-    elif imp_unit.get() == "nautical mile":
+    elif input_unit == "nautical mile":
         factor = 1852
-    lbl_result["text"] = str(input_value*factor) + " m"
-    print(str(input_value*factor) + " m")
+
+    if output_unit == "mm":
+        factor *= 1000
+    elif output_unit == "cm":
+        factor *= 100
+    elif output_unit == "km":
+        factor *= 0.001
+    lbl_result["text"] = str(input_value*factor)
+    print(str(input_value*factor) + " "+ output_unit)
 
 # If a key is pressed, this callback function is triggered
 def key_pressed(event):
@@ -38,6 +48,10 @@ def key_pressed(event):
 # Callback for change of StringVar imp_unit
 def change_input_unit(*args):
     print("Input changed to: "+ imp_unit.get())
+    convert_unit(0)
+
+def change_output_unit(*args):
+    print("Output changed to: " + SI_unit.get())
     convert_unit(0)
 
 # _______ GUI _____________________________________________________________
@@ -50,12 +64,13 @@ main_frame = tk.Frame(master = window)  # frame(panel) inside the window
 ent_unit = tk.Entry(master=main_frame, width = 15)
 ent_unit.grid(row=0, column=0, padx=(15, 2), pady = 7)
 
-# Unit variable
+# Imperial Unit variable
 imp_unit = tk.StringVar(window)
 imperial_units = {'inch', 'foot', 'yard', 'mile', 'nautical mile'}   # dictionary for the dropdown menu
 imp_unit.set('inch')   # default choice of the dropdown menu
 imp_unit.trace('w', change_input_unit)   # call the callback function whenever the value changes
 
+# Dropdown menu for unit selection
 imp_unit_menu = tk.OptionMenu(main_frame, imp_unit, *imperial_units)
 imp_unit_menu.grid(row=0, column=1, padx=(2, 5), pady = 10)
 
@@ -67,9 +82,20 @@ btn_convert = tk.Button(master=main_frame, text = "\N{RIGHTWARDS BLACK ARROW}", 
 btn_convert.grid(row=0, column=2, padx=(20,20), pady = 10)
 btn_convert.bind("<Button-1>", convert_unit)
 
-txt_result = "0 m"
+# SI Unit variable
+SI_unit = tk.StringVar(window)
+SI_units = {'mm', 'cm', 'm', 'km'}
+SI_unit.set('m')
+SI_unit.trace('w', change_output_unit)
+
+# Result label
+txt_result = "0"
 lbl_result = tk.Label(master=main_frame, text=txt_result)
 lbl_result.grid(row=0, column=3, padx=(10,15), pady = 10)
+
+# Dropdown menu SI-unit
+SI_unit_menu = tk.OptionMenu(main_frame, SI_unit, *SI_units)
+SI_unit_menu.grid(row=0, column=4, padx=(10,15), pady=10)
 
 # Add frame and create main loop for event handling
 main_frame.pack()

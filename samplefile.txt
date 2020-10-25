@@ -1,0 +1,4 @@
+Hello there, this is a sample file
+to be read by the cool program!
+
+Congratulations!
